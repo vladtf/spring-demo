@@ -10,18 +10,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository("postgres")
-public class PersonDataAccesService implements PersonDao {
+public class PersonDataAccessService implements PersonDao {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public PersonDataAccesService(JdbcTemplate jdbcTemplate) {
+    public PersonDataAccessService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public int insertPerson(UUID id, Person person) {
-        return 0;
+        final String sql = "INSERT INTO person (id, name) VALUES ( ?, ?);";
+        return jdbcTemplate.update(sql, id, person.getName());
     }
 
     @Override
@@ -49,11 +50,16 @@ public class PersonDataAccesService implements PersonDao {
 
     @Override
     public int deletePersonById(UUID id) {
-        return 0;
+        final String sql = "DELETE FROM person WHERE id = ?;";
+        return jdbcTemplate.update(sql, id);
     }
 
     @Override
     public int updatePersonById(UUID id, Person person) {
-        return 0;
+        final String sql = "UPDATE person " +
+                "SET name = ? " +
+                "WHERE id = ? ;";
+
+        return jdbcTemplate.update(sql, person.getName(), id);
     }
 }
